@@ -10,9 +10,17 @@ bot = telebot.TeleBot(BOT_TOKEN)
 variables = {
     'key_holder': "Luis",
     'key_time' : "Tiempo",
-    'key_hour' : "Hora",
-    'Presidente': "Luis",
-    'Telematica': "Mario"
+    'key_hour' : "Hora"
+}
+
+administracion = {
+    'Presidente' : "Luis", 
+    'Telemática' : "Mario",
+    'Secretario' : "César", 
+    'RRPP' : "Natalia",
+    'Vicepresidente' : "Natalia",
+    'Tesorero' : "Miguel Ángel",
+    'R2D2' : "BUBIBU"
 }
 
 def save_to_json(variables):
@@ -29,25 +37,24 @@ def get_from_json():
         return None
 
 
-variables = get_from_json()
-
-@bot.message_handler(commands=['newkey'])
+@bot.message_handler(commands=['llave!'])
 def new_key(message):
-    # Obtener el texto después de '/newKey'
-    #keys_holder = message.text.split('/newKey', 1)[1].strip()
     bot.reply_to(message, f"Se ha establecido la nueva clave: {message.from_user.first_name}")
     variables['keys_holder']=message.from_user.first_name
     variables['key_day']=datetime.datetime.now().strftime("%d/%m/%Y")
     variables['key_hour']=datetime.datetime.now().strftime("%H:%M:%S")
     save_to_json(variables)
-    
 
-@bot.message_handler(commands=['start', 'hola'])
-def send_welcome(message):
-    bot.reply_to(message, "¡Holi, espero que estes teniendo un buen día!")
+@bot.message_handler(commands=['llavent'])
+def no_key(message):
+    variables = get_from_json()
+    bot.reply_to(message, f"{variables['keys_holder']} ha dejado la llave")
+    variables['keys_holder']="Consergería"
+    variables['key_day']=datetime.datetime.now().strftime("%d/%m/%Y")
+    variables['key_hour']=datetime.datetime.now().strftime("%H:%M:%S")
+    save_to_json(variables)
 
-    
-@bot.message_handler(commands=['llaves'])
+@bot.message_handler(commands=['llave?'])
 def actual_key_holder(message):
     variables = get_from_json()
     bot.reply_to(message, "Las llaves las tiene " + variables['keys_holder'] + " el día " + variables['key_day'] + " a las " + variables['key_hour'])
