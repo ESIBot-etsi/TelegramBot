@@ -149,6 +149,31 @@ def imprimir_ccomandos(message):
 @bot.message_handler(commands=['reunion!'])
 def nueva_reunion(message):
     chat_id = message.chat.id
-    reuniones = get_from_json("reuniones.json")
+    bot.send_message(chat_id, "Por favor, proporciona el motivo de la reunión.")
+    bot.register_next_step_handler(message, recibir_motivo)
 
+def recibir_motivo(message):
+    chat_id = message.chat.id
+    motivo = message.text
+    reuniones = get_from_json("reuniones.json")
+    if reuniones is None:
+        reuniones = {}
+    reuniones[chat_id] = {"motivo": motivo}
+    save_to_json(reuniones, "reuniones.json")
+    bot.send_message(chat_id, "Perfecto, ahora por favor proporciona la fecha de la reunión (DD/MM/AAAA).")
+    bot.register_next_step_handler(message, recibir_fecha)
+
+def recibir_fecha(message):
+    chat_id = message.chat.id
+    fecha = message.text
+    reuniones = get_from_json("reuniones.json")
+    if reuniones is None:
+        reuniones = {}
+    if chat_id not in reuniones:
+        reuniones[chat_id] = {}
+    reuniones[chat_id]["fecha"] = fecha
+    save_to_json(reuniones, "reuniones.json")
+    bot.send_message(chat_id, "¡Reunión guardada exitosamente!")
+    
+    
 bot.infinity_polling()
