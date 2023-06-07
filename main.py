@@ -16,13 +16,13 @@ variables = {
     'Telematica': "Mario"
 }
 
-def save_to_json(variables):
-    with open('variables.json', 'w') as archivo:
+def save_to_json(variables, filename):
+    with open(filename, 'w') as archivo:
         json.dump(variables, archivo)
 
-def get_from_json():
+def get_from_json(filename):
     try:
-        with open('variables.json', 'r') as archivo:
+        with open(filename, 'r') as archivo:
             variables = json.load(archivo)
             return variables
     except FileNotFoundError:
@@ -38,8 +38,9 @@ diccionario_cargos = {
         'Tesorero' : "Miguel Ángel",
         'R2D2' : "BUBIBU"
     }
-variables = get_from_json()
-palabras_clave = ['joder', 'mierda', 'coño', 'cago', 'puta', 'nigga', 'battlebots', 'brocoli']
+variables = get_from_json("variables.json")
+with open('palabrotas.txt', 'r', encoding='utf-8') as archivo:
+        palabras_clave = archivo.read().splitlines()
 palabras_muy_clave = ['Alvaro', 'alvaro', 'alvarito', 'juanmanue', 'Alvarito', 'Juanmanue', 'Pagina Web', 'Web', 'web', 'pagina web', 'Álvaro', 'álvaro']
 frases_aleatorias = ['¿Hablas de Alvarito, la layenda que salvó esibot innumerables veces?',
                     'Aun recuerdo cuando Alvarito salvó a mi perro de ser atropellado por una vespa',
@@ -54,28 +55,57 @@ def new_key(message):
     variables['keys_holder']=message.from_user.first_name
     variables['key_day']=datetime.datetime.now().strftime("%d/%m/%Y")
     variables['key_hour']=datetime.datetime.now().strftime("%H:%M:%S")
-    save_to_json(variables)
+    save_to_json(variables, "variables.json")
     
+@bot.message_handler(commands=['add'])
+def addTarea(message):
+    quehaceres = get_from_json("quehaceres.json")
+    tarea = message.text.replace('/add ', '')
+    quehaceres.append(tarea)
+    save_to_json(quehaceres, "quehaceres.json")
+    
+@bot.message_handler(commands=['tareas'])
+def showTarea(message):
+    chat_id = message.chat.id
+    quehaceres = get_from_json("quehaceres.json")
+    mensaje = ""
+    j=1
+    for i in quehaceres:
+        mensaje +=str(j) + " " + i +"\n"
+        j+=1
+    bot.send_message(chat_id, mensaje)
+
+@bot.message_handler(commands=['remove'])
+def removeTarea(message):
+    chat_id = message.chat.id
+    quehaceres = get_from_json("quehaceres.json")
+    tarea = int(message.text.replace('/remove ', ''))
+    del quehaceres[tarea-1]
+    save_to_json(quehaceres, "quehaceres.json")
+    showTarea(message)
+
+
 
 @bot.message_handler(commands=['start', 'hola'])
 def send_welcome(message):
-    bot.reply_to(message, "¡Holi, espero que esteis teniendo un buen día!")
+    with open('saludos.txt', 'r', encoding='utf-8') as archivo:
+        saludo = archivo.read().splitlines()
+    bot.reply_to(message, random.choice(saludo))
     
 
-    
 @bot.message_handler(commands=['llave?'])
 def actual_key_holder(message):
-    variables = get_from_json()
+    variables = get_from_json("variables.json")
     bot.reply_to(message, "Las llaves las tiene " + variables['keys_holder'] + " desde las " + variables['key_hour'])
     
 @bot.message_handler(commands=['llavent'])
 def no_key(message):
-    variables = get_from_json()
+    variables = get_from_json("variables.json")
     bot.reply_to(message, f"{variables['keys_holder']} ha dejado la llave")
     variables['keys_holder']="Consergería"
     variables['key_day']=datetime.datetime.now().strftime("%d/%m/%Y")
     variables['key_hour']=datetime.datetime.now().strftime("%H:%M:%S")
-    save_to_json(variables)
+    save_to_json(variables, "variables.json")
     
 @bot.message_handler(commands=['administracion'])
 def imprimir_cargo(message):
@@ -100,12 +130,9 @@ def imprimir_cargo(message):
 
 
 @bot.message_handler(func=lambda message: any(palabra in message.text.lower() for palabra in palabras_clave))
-def send_message(message):
-    # Obtener el ID de chat del usuario que envió el mensaje
-    chat_id = message.chat.id
-    
-    # Enviar un mensaje en respuesta a "queso"
-    bot.send_message(chat_id, 'Has dicho una palabra que puede resultar ofensiva para ciertas personas, por favor modere su lenguaje <3')
+def palabrotas(message):
+        # Enviar un mensaje en respuesta a "queso"
+    bot.reply_to(message, 'Has dicho una palabra que puede resultar ofensiva para ciertas personas, por favor modere su lenguaje <3')
 
 @bot.message_handler(func=lambda message: any(palabra in message.text.lower() for palabra in palabras_muy_clave))
 def send_message(message):
@@ -126,6 +153,5 @@ def imprimir_ccomandos(message):
     -/llave? : muestra por el chat quien tiene la llave y desde cuando
     -/llavent : registra que la llave ha sido dejada en el taller
     -/administracion: muestra por pantalla los cargos de la administracion, tambien se puede filtrar por cargos específicos. Un ejemplo sería :'/administracion Presidente'""")
-
 
 bot.infinity_polling()
