@@ -127,22 +127,14 @@ def imprimir_cargo(message):
             mensaje = f'{cargo}: {nombre}'
             bot.send_message(chat_id, mensaje)
 
-
-
 @bot.message_handler(func=lambda message: any(palabra in message.text.lower() for palabra in palabras_clave))
 def palabrotas(message):
-        # Enviar un mensaje en respuesta a "queso"
     bot.reply_to(message, 'Has dicho una palabra que puede resultar ofensiva para ciertas personas, por favor modere su lenguaje <3')
 
 @bot.message_handler(func=lambda message: any(palabra in message.text.lower() for palabra in palabras_muy_clave))
 def send_message(message):
-    # Obtener el ID de chat del usuario que envió el mensaje
     chat_id = message.chat.id
-    
-    # Seleccionar una frase aleatoria del array
     frase = random.choice(frases_aleatorias)
-    
-    # Enviar la frase aleatoria como respuesta
     bot.reply_to(message, frase)
 
 @bot.message_handler(commands=['comandos', 'help'])
@@ -153,5 +145,10 @@ def imprimir_ccomandos(message):
     -/llave? : muestra por el chat quien tiene la llave y desde cuando
     -/llavent : registra que la llave ha sido dejada en el taller
     -/administracion: muestra por pantalla los cargos de la administracion, tambien se puede filtrar por cargos específicos. Un ejemplo sería :'/administracion Presidente'""")
+
+@bot.message_handler(commands=['reunion!'])
+def nueva_reunion(message):
+    chat_id = message.chat.id
+    reuniones = get_from_json("reuniones.json")
 
 bot.infinity_polling()
