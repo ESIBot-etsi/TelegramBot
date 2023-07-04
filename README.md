@@ -18,17 +18,17 @@ Bot de esibot de Telegram
   ```
   virtualenv telebot
   ```
-  Creamos el entorno virtual llamado telebot donde vamos a instalar las dependencias pertinentes, para ello haremos lo siguiente, entro del directorio de trabajo:
+  Creamos el entorno virtual llamado telebot donde vamos a instalar las dependencias pertinentes, para      ello haremos lo siguiente, entro del directorio de trabajo:
   ```
   source telebot/bin/activate
   pip install -r requirements.txt
   ```
-Ya podriamos hacer lo que quisieramos aqui y para terminar solo tenemos que escribir:
+  Ya podriamos hacer lo que quisieramos aqui y para terminar solo tenemos que escribir:
   ```
   deactivate
   ```
 
-Para volver a desarrollar sin instalar todo solo necesitas: 
+  Para volver a desarrollar sin instalar todo solo necesitas: 
   ```
   source telebot/bin/activate
   deactivate
