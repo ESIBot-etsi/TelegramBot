@@ -24,12 +24,12 @@ Bot de esibot de Telegram
   pip install -r requirements.txt
   ```
 Ya podriamos hacer lo que quisieramos aqui y para terminar solo tenemos que escribir:
-```
+  ```
   deactivate
-```
+  ```
 
 Para volver a desarrollar sin instalar todo solo necesitas: 
-```
-source telebot/bin/activate
-deactivate
-```
+  ```
+  source telebot/bin/activate
+  deactivate
+  ```
