@@ -1,4 +1,3 @@
-import os
 import telebot 
 import json
 import datetime
@@ -84,8 +83,6 @@ def removeTarea(message):
     save_to_json(quehaceres, "quehaceres.json")
     showTarea(message)
 
-
-
 @bot.message_handler(commands=['start', 'hola'])
 def send_welcome(message):
     with open('saludos.txt', 'r', encoding='utf-8') as archivo:
@@ -97,7 +94,7 @@ def send_welcome(message):
 def actual_key_holder(message):
     variables = get_from_json("variables.json")
     bot.reply_to(message, "Las llaves las tiene " + variables['keys_holder'] + " desde las " + variables['key_hour'])
-    
+
 @bot.message_handler(commands=['llavent'])
 def no_key(message):
     variables = get_from_json("variables.json")
@@ -106,7 +103,7 @@ def no_key(message):
     variables['key_day']=datetime.datetime.now().strftime("%d/%m/%Y")
     variables['key_hour']=datetime.datetime.now().strftime("%H:%M:%S")
     save_to_json(variables, "variables.json")
-    
+
 @bot.message_handler(commands=['administracion'])
 def imprimir_cargo(message):
     chat_id = message.chat.id
@@ -146,34 +143,25 @@ def imprimir_ccomandos(message):
     -/llavent : registra que la llave ha sido dejada en el taller
     -/administracion: muestra por pantalla los cargos de la administracion, tambien se puede filtrar por cargos específicos. Un ejemplo sería :'/administracion Presidente'""")
 
-@bot.message_handler(commands=['reunion!'])
+@bot.message_handler(commands='reunion!')
 def nueva_reunion(message):
     chat_id = message.chat.id
-    bot.send_message(chat_id, "Por favor, proporciona el motivo de la reunión.")
-    bot.register_next_step_handler(message, recibir_motivo)
-
-def recibir_motivo(message):
-    chat_id = message.chat.id
-    motivo = message.text
-    reuniones = get_from_json("reuniones.json")
-    if reuniones is None:
-        reuniones = {}
-    reuniones[chat_id] = {"motivo": motivo}
-    save_to_json(reuniones, "reuniones.json")
-    bot.send_message(chat_id, "Perfecto, ahora por favor proporciona la fecha de la reunión (DD/MM/AAAA).")
-    bot.register_next_step_handler(message, recibir_fecha)
-
-def recibir_fecha(message):
-    chat_id = message.chat.id
-    fecha = message.text
-    reuniones = get_from_json("reuniones.json")
-    if reuniones is None:
-        reuniones = {}
-    if chat_id not in reuniones:
-        reuniones[chat_id] = {}
-    reuniones[chat_id]["fecha"] = fecha
-    save_to_json(reuniones, "reuniones.json")
-    bot.send_message(chat_id, "¡Reunión guardada exitosamente!")
+    texto = message.text[6:].strip()  # Obtener el texto después del comando "/webo" y eliminar espacios en blanco al principio y al final
+    palabras = texto.split()  # Dividir el texto en palabras
     
+    if len(palabras) >= 2:
+        motivo = palabras[0]
+        dia = palabras[1]
+        reuniones={
+            motivo:dia
+        }
+        save_to_json(reuniones, "reuniones.json")
+        
+    else:
+        bot.send_message(chat_id, "Has introducido mal el formato")
+
+@bot.message_handler(commands='reuniones?')
+def muestra_reuniones(message):
+    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEBJX9fZ3Z3Z3Z3Z3Z3Z3Z3Z3Z3Z3Z3Z3ZAAK6AQACXZQlVU2Z1Z1ZIwQ')
     
 bot.infinity_polling()
