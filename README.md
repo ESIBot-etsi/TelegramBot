@@ -16,7 +16,7 @@ Bot de esibot de Telegram
   El editor ya es cosa tuya, yo uso tanto neovim (usando NvChad) como vscode. Para neovim te recomiendo que veas el siguiente [video](https://www.youtube.com/watch?v=4BnVeOUeZxc).
   Una vez apañado el editor, debemos establecer el entorno virtual:
   ```
-  virtualenv telebot
+  python3 -m venv telebot
   ```
   Creamos el entorno virtual llamado telebot donde vamos a instalar las dependencias pertinentes, para      ello haremos lo siguiente, entro del directorio de trabajo:
   ```
