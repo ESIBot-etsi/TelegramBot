@@ -127,7 +127,7 @@ def imprimir_cargo(message):
 @bot.message_handler(func=lambda message: any(palabra in message.text.lower() for palabra in palabras_clave))
 def palabrotas(message):
     username = message.from_user.username if message.from_user.username else "Usuario desconocido"
-    bot.reply_to(message, f"¡Hey, @{username}! has dicho una palabra que puede resultar ofensiva para ciertas personas, por favor modere su lenguaje <3")
+    bot.reply_to(message, f"¡Hey, @{username}! {message.text} es una palabra que puede resultar ofensiva para ciertas personas, por favor modere su lenguaje <3")
 
 @bot.message_handler(func=lambda message: any(palabra in message.text.lower() for palabra in palabras_muy_clave))
 def send_message(message):
