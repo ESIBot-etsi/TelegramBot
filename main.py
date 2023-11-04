@@ -163,6 +163,6 @@ def nueva_reunion(message):
 
 @bot.message_handler(commands='reuniones?')
 def muestra_reuniones(message):
-    bot.send_sticker(message.chat.id, 'CAACAgIAAxkBAAEBJX9fZ3Z3Z3Z3Z3Z3Z3Z3Z3Z3Z3Z3Z3ZAAK6AQACXZQlVU2Z1Z1ZIwQ')
+    bot.reply_to(message, "nose")
     
 bot.infinity_polling()
